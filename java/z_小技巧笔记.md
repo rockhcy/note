@@ -274,4 +274,17 @@ PageHelper pageHelper(){
 ```
 `mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl`可以开启日志输出。如果springboot已经使用slf4j，会出现冲突导致项目启动失败。没去研究解决办法，反正我基本不用这种写法了。
 
-
+#### 2020-06-10
+java中的泛型属于编译期检查并确定数据类型，通过反射可以绕开泛型检查。比如在`List<Integer>`中放入string类型。
+```java
+ @Test
+public void t7() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    ArrayList<Integer> list = new ArrayList<>();//申明一个Integer的list
+    list.add(1);
+    list.add(2);
+    Class listClass = list.getClass();
+    Method m= listClass.getMethod("add",Object.class);
+    m.invoke(list,"aaa");//通过反射调用add方法，将aaa字符串放入list中
+    System.out.println( list.toString() );// [1, 2, aaa]
+}
+```
