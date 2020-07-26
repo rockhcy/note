@@ -148,3 +148,48 @@ redis事务还有一个非常重要的命令`watch key1 [key2]`,该命令用于�
     activerehashing yes
     30. 指定包含其它的配置文件，可以在同一主机上多个Redis实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件
     include /path/to/local.conf
+##### 2020-07-22 补充
+今天面试时面试官问了两个关于redis的问题，没答上来，这里记录下：
+1.redis的分布式锁是如何实现的？
+通过setnx实现，该命令设置值时只在key不存在时生效，若key已经存在就不会再执行任何动作。redis本身是单线程的，所有命令都是串行，通过反复set和remove就能实现分布式锁。
+springboot提供了RedisTemplate对象来操作数据库，但是在分布式场景下使用redission更加合适。示例代码如下：
+```java
+  @Autowired
+	private Redisson redisson;
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
+	//使用RedisTemplate实现分布式锁
+	public void test4(){
+		String lockKey = "product_001";
+		String clientId = UUID.randomUUID().toString();
+		try {
+			stringRedisTemplate.opsForValue().setIfAbsent(lockKey,clientId);
+			stringRedisTemplate.expire(lockKey,10,TimeUnit.SECONDS);
+			System.out.println( "创建一个子线程，在子线程中创建一个定时器，循环给上面的key续命，避免主线程还没走到finally中key就失效的情况" );
+			System.out.println("执行业务逻辑");
+		}finally {
+			//检查锁是不是自己加的，如果是就开锁。避免并发下把别人添加的锁给删除了
+			if ( clientId.equals( stringRedisTemplate.opsForValue().get(lockKey) ) ){
+				stringRedisTemplate.delete(lockKey);
+			}
+		}
+	}
+	//使用redisson实现分布式锁，原理是一样的，但是代码更加简洁
+	@Test
+	public void test2(){
+		String lockKey = "product_001";
+		//获取到一个锁对象
+		RLock redissonLock = redisson.getLock(lockKey);
+		try {
+			//设置锁到redis中，key失效时间为10秒，同时会在失效时间1/3的时候重置失效时间，避免业务没走完锁就没了
+			redissonLock.lock(10,TimeUnit.SECONDS);
+			System.out.println("执行业务逻辑");
+		}finally {
+			redissonLock.unlock();
+		}
+	}
+```
+注意：redis是单线程的，足够应付大多数场景。如果要在这个基础上进一步提升并发，可以将数据分段加载到redis，不同实例访问不同的数据段，这样就能进一步提升性能，原理和ConcurrentHashMap中的分段锁差不多。
+在集群环境下，当主节点设置锁后宕级，该锁如果还没同步到从节点会导致锁失效，redis本身无法解决这个问题，可以考虑使用zookeeper实现分布式锁，但是速度会慢些。
+2.redis应该如何防止缓存击穿，如果查询的结果redis中没有，数据库中也没有，那么每次查询时必然都会走数据库，如何防范？
+答：对于热点数据做缓存。对于数据库中都不存在的数据，可以在redis中放一个value为null的键值对。这样查询时redis就能命中了，可以将这种键值对的失效时间设置短一点，这样redis也不至于无线放大。
