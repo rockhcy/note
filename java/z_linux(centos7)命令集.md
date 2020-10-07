@@ -30,4 +30,4 @@
 **需要安装的常用工具命令**：
 lrzsz：用于windows和linux跨平台文件传输
 unzip：解压zip文件
-vim：linux下经典编辑工具
+vim：linux下经典编辑工具这个主要是broker的服务端口号，作为对producer和consumer使用服务的端口号，默认为10911，可以通过配置文件中修改。

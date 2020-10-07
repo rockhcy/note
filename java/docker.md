@@ -51,7 +51,7 @@ systemctl restart docker
     docker kill 容器id      #强杀，强制停止容器
     docker rm 容器id        #删除容器
     docker top 容器id       # 查看容器内运行的进程
-    docker exec -it 容器id  #进入容器
+    docker exec -it 容器id /bin/bash  #进入容器
     docker attach 容器id    #进入容器，推荐使用
     exit                    #退出容器，容器会停止
     ctrl+P+Q                #容器不停止退出
