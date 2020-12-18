@@ -71,3 +71,24 @@ systemctl restart docker
     注意：我们通过文件恢复镜像时，命令行的输出可能会是一个很小的文件大小。因为“镜像层”是很多层累加起来的，打包时会将所有依赖层全部封装，但是恢复时会逐层检查，如果某层(比如基础镜像)已经存在了，就会直接引用这层。
     而且我发现docker命令在操作镜像时有个规律，都是"docker 命令 参数 镜像id" ，镜像id基本都是放在最后面的
 3.docker容器启动时，可能会提示`iptables: No chain/target/match by that name.`。此时重启docker服务就能解决这个问题，原理我也不知道。在使用redis镜像时遇到过这样的情况。
+
+##### 2020-11-09 补充关于容器内启动redis的相关命令笔记
+`docker run -p 6379:6379 --name mdm-redis -v /hcy/redis/redis.conf:/etc/redis/redis.conf  -v /hcy/redis/redisData:/data -d redis redis-server /etc/redis/redis.conf --appendonly yes`
+ 启动一个docker容器，将6379映射到容器内的6379上，-v是文件夹映射，宿主机地址：容器地址；-d 后台启动。
+ 我启动时一直无法手动指定 /etc/redis/redis.conf 配置文件，不知道是否因为我使用的配置文件太老了。
+ 放弃指定该文件后启动成功。
+ docker logs 容器id，可以查看到容器的启动日志，如果发现容器启动失败，可以使用该命令查看启动失败的原因。
+ 容器启动时的配置参数会被记录在 /var/lib/docker/containers/ 容器id/hostconfig.json 下，如果部分参数配置错了，可以直接修改该json。
+
+ ##### 2020-12-1 补充一个docker容器启动时提示iptables: No chain/target/match by that name的问题
+ 问题：
+ ```shell
+ [root@localhost rocketmq4.7]# docker run -d --name myGuacd -p 4822:4822 guacamole/guacd
+04d71dc910e5247cb10b599612835806f752140cf5a1f4bcaa2abc1350a12d76
+docker: Error response from daemon: driver failed programming external connectivity on endpoint myGuacd (a5df94a8001917e0835c7fa2e7ca15e0597aea3a2074d1e551009a6d15803d62):  (iptables failed: iptables --wait -t nat -A DOCKER -p tcp -d 0/0 --dport 4822 -j DNAT --to-destination 172.17.0.3:4822 ! -i docker0: iptables: No chain/target/match by that name.
+ (exit status 1)).
+ ```
+ 还原现场：
+ gua-java端启动时提示tunnel连接超时，检查后发现docker宿主机防火墙没开放端口，最近测试重建环境比较多，顺手就将firewalld给关了，然后发现tunnel还是连接超时。尝试重启docker容器，提示iptables: No chain/target/match by that name.
+ 解决办法：
+ 重启docker服务，问题解决。`service docker restart`
