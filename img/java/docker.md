@@ -92,3 +92,11 @@ docker: Error response from daemon: driver failed programming external connectiv
  gua-java端启动时提示tunnel连接超时，检查后发现docker宿主机防火墙没开放端口，最近测试重建环境比较多，顺手就将firewalld给关了，然后发现tunnel还是连接超时。尝试重启docker容器，提示iptables: No chain/target/match by that name.
  解决办法：
  重启docker服务，问题解决。`service docker restart`
+
+ ##### 2020-12-19 补充关于dockers安装后无法启动的问题
+ 问题：
+ 今天在一台空白的centos上安装docker，安装完成后启动提升
+ `Job for docker.service failed because the control process exited with error code. See "systemctl status docker.service" and "journalctl -xe" for details.`
+ 网上说是linux内核版本不够，升级后还是无法解决。
+ 解决办法：
+ 执行 vi /etc/sysconfig/selinux , 把 selinux 属性值改为disabled。然后重启系统，docker就可以顺利启动了。
