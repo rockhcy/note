@@ -53,7 +53,7 @@ public JSONArray selectRouters(){
 ## 链接
 [百度的链接](http://www.baidu.com)
 ## 图片
-![](./img/baidu.jpg)
+![](../img/baidu.jpg)
 ## 表格   :-表示对其方式 :-: 表示居中对齐
 | 表头aaaaaaaaaa | 标题aaaaaaaaaaaaaa|
 |:----|:----:|

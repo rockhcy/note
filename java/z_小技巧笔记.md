@@ -11,8 +11,8 @@
 ArrayList底层使用Object数组，默认长度10，默认每次扩容为1.5倍的旧长度，尾部会预留空间不免频繁扩容。
 LinkedList底层采用链表存储，删除和添加元素时不受元素位置影响。但是每个元素需要占用更多的空间。
 在调用`get(int index)`获取元素时，ArrayList采用的是通过数组下标直接获取(优先for，其次foreach);而LinkedList采用iterator遍历获取。
-![ArrayList](./img/ArrayList通过下标获取数据.png)
-![LinkedList](./img/LinkedList通过下标获取数据.png)
+![ArrayList](../img/ArrayList通过下标获取数据.png)
+![LinkedList](../img/LinkedList通过下标获取数据.png)
 
 如果是`List.get(int index)`在调用后会有一个判断过程。JDK中有一个`RandomAccess`接口，这个接口中没有任何实现。在`Connection`接口下有如下方法：
 ```java
@@ -226,7 +226,7 @@ http2.0的特点：
 注意：这些应用层的传输协议和我们基本无关，由web容器提供支持。tomcat 9开始支持http2.0，具体情况等我实际使用了再来补充。
 #### 2019-12-27
 1.实测mybatis的分页插件PageHelpler和mybatis-plus中的分页插件一样，都是物理分页，并不存在查询全部后在内存中做逻辑分页的情况！
-![PageHelpler分页测试](./img/pageHelper分页测试.png)
+![PageHelpler分页测试](../img/pageHelper分页测试.png)
 PageHelpler在导入依赖后可以在springboot启动类中添加如下代码来启动插件
 ```java
 @Bean

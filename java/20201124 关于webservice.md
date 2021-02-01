@@ -30,7 +30,7 @@ public void loadingSAOPServer(){
 }
 ```
 这样我们就写好了一个webservice。当我们访问`http://127.0.0.1:9527/rtyy?wsdl` 时会得到一个xml文件，该xml就描述了调用刚才的service的调用方式。
-![WSDL.png](./img/20201124001-WSDL.png)
+![WSDL.png](../img/20201124001-WSDL.png)
 看不懂没关系，JDK看得懂。JDK提供了一个工具，可以根据接口直接生成对应的java和class文件，参考GRPC中根据proto生成对应代码。
 具体流程如下：
 1. jdk/bin目录下有一个wsimport.exe文件，通过它生成代码。执行命令 `wsimport -keep http://127.0.0.1:9527/rtyy?wsdl` 会在当前目录下生成对应的包文件夹，里面包含java文件和class文件，我们写代码一般负责java文件到自己的项目中就好。

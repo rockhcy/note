@@ -647,7 +647,7 @@ mybatis.mapper-locations=classpath:mybatis/mappers/*Mapper.xml
 springData项目的目的是为了简化构建基于spring框架应用的数据访问技术。它包含很多个子项目，分别用于解决关系型数据库、非关系型数据库、云数据服务、全文检索，缓存等等一系列的数据场景。基本上现在主流的技术它都有对应的解决方案。
 springData提供了一套统一的API接口来执行CRUD、查询、排序、分页等常用操作，再由接口去执行具体的数据库实现。这些API可以同时适配各种关系型和非关系型数据库，真正做到逻辑和持久层解耦。
 简单来说就是可以做到将来换数据库类型后可以不改或少改代码！
-![springData体系](./img/SpringData.png)
+![springData体系](../img/SpringData.png)
 springboot整合JPA也需要三个步骤：
 第一步、引入依赖。注意，不需要mybatis的依赖，jpa自成一派！
 ```xml
