@@ -31,10 +31,10 @@ mkdir -p /etc/docker
 vim /etc/docker/daemon.json
 #写入自己的加速器地址，申请方法：在【阿里云】中搜索“容器镜像服务”，找到【镜像加速器】，将json写入文件就可以了
 {
-  "registry-mirrors": ["https://g05sgp83.mirror.aliyuncs.com"]
+  "registry-mirrors":["https://g05sgp83.mirror.aliyuncs.com"]
 }
 #加载配置，重启docker服务
-systemctl daemon -reload
+systemctl daemon-reload
 systemctl restart docker
 ```
     docker常用的操作命令
